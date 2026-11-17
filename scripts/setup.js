@@ -1,11 +1,6 @@
 'use strict';
 
-/**
- * Cria as colecoes e os indices do ZapChat 2.
- * (O servidor tambem cria os indices ao iniciar; este script e opcional.)
- *
- * Execucao: npm run setup
- */
+// Cria os indices. Opcional: o servidor ja faz isso ao iniciar. Uso: npm run setup
 
 const executar = require('./executar');
 const Manutencao = require('../src/database/Manutencao');

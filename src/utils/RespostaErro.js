@@ -1,13 +1,7 @@
 'use strict';
 
-/**
- * Traducao das excecoes da aplicacao para a resposta HTTP (Projeto 2).
- *
- * A hierarquia de erros criada no Projeto 1 e reaproveitada: cada tipo de
- * excecao corresponde a um codigo HTTP e a uma mensagem que pode ser exibida
- * ao usuario sem expor detalhes internos (stack trace, mensagens do driver,
- * caminhos de arquivos...). Esses detalhes ficam apenas no arquivo de log.
- */
+// Converte os erros da aplicacao em status HTTP e mensagem para o usuario.
+// Os detalhes tecnicos ficam so no log.
 
 const {
   ErroAplicacao,
@@ -20,37 +14,22 @@ const {
   ErroConexao
 } = require('../errors');
 
-/** Erros do driver que indicam que o servidor do MongoDB esta fora do ar. */
+// Erros do driver que indicam que o servidor do MongoDB esta fora do ar.
 const FALHAS_DE_REDE = /MongoServerSelectionError|MongoNetworkError|MongoNetworkTimeoutError|MongoTopologyClosedError/;
 
 class RespostaErro {
-  /**
-   * Indica se o erro do banco e uma queda de conexao com o MongoDB.
-   *
-   * @param {Error} erro
-   * @returns {boolean}
-   */
+  // Indica se o erro do banco e uma queda de conexao com o MongoDB.
   static ehQuedaDoBanco(erro) {
     return erro instanceof ErroBanco && FALHAS_DE_REDE.test(erro.causa?.name ?? '');
   }
 
-  /**
-   * Indica se o erro do banco e a violacao de um indice unico (codigo 11000),
-   * como um e-mail ja cadastrado.
-   *
-   * @param {Error} erro
-   * @returns {boolean}
-   */
+  // Indica se o erro do banco e a violacao de um indice unico (codigo 11000),
+  // como um e-mail ja cadastrado.
   static ehDuplicidade(erro) {
     return erro instanceof ErroBanco && erro.detalhes?.codigo === 11000;
   }
 
-  /**
-   * Codigo HTTP correspondente a excecao.
-   *
-   * @param {Error} erro Excecao capturada.
-   * @returns {number}
-   */
+  // Codigo HTTP correspondente a excecao.
   static status(erro) {
     if (erro instanceof ErroValidacao) return 400;
     if (erro instanceof ErroAutenticacao) return 401;
@@ -68,13 +47,8 @@ class RespostaErro {
     return 500;
   }
 
-  /**
-   * Indica se o erro foi causado pelos dados que o usuario enviou e, portanto,
-   * pode ser mostrado de volta no proprio formulario.
-   *
-   * @param {Error} erro
-   * @returns {boolean}
-   */
+  // Indica se o erro foi causado pelos dados que o usuario enviou e, portanto,
+  // pode ser mostrado de volta no proprio formulario.
   static ehErroDoUsuario(erro) {
     return (
       erro instanceof ErroValidacao ||
@@ -86,12 +60,7 @@ class RespostaErro {
     );
   }
 
-  /**
-   * Mensagem segura para exibir ao usuario.
-   *
-   * @param {Error} erro Excecao capturada.
-   * @returns {{titulo: string, mensagem: string, itens: string[]}}
-   */
+  // Mensagem segura para exibir ao usuario.
   static paraUsuario(erro) {
     const status = RespostaErro.status(erro);
 

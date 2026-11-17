@@ -1,7 +1,7 @@
 <%- include('../partials/topo') %>
 
 <div class="cartao" style="max-width:600px">
-  <p><a href="/conversas/<%= mensagem.conversaId %>#m-<%= mensagem._id %>">← voltar para a conversa</a></p>
+  <p><a href="/conversas/<%= mensagem.conversaId %>#m-<%= mensagem._id %>">Voltar para a conversa</a></p>
   <h1>Editar mensagem</h1>
   <p class="suave">Enviada em <%= formatar.dataHora(mensagem.criadoEm) %><%= mensagem.editada ? ' · já editada antes' : '' %></p>
 

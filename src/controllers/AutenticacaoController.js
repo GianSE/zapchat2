@@ -1,13 +1,6 @@
 'use strict';
 
-/**
- * CONTROLLER - autenticacao: login, cadastro e logout.
- *
- * Demonstra os tres mecanismos de persistencia da navegacao vistos na semana 11:
- *   - SESSAO (express-session): guarda quem esta logado, no servidor;
- *   - COOKIE (cookie-parser):  lembra o ultimo e-mail digitado, no navegador;
- *   - a senha e conferida pelo Model com o hash scrypt (nunca em texto puro).
- */
+// Login, cadastro e logout.
 
 const Controlador = require('./Controlador');
 const ChatService = require('../services/ChatService');
@@ -16,21 +9,19 @@ const Formulario = require('../utils/Formulario');
 const logger = require('../utils/Logger');
 const { ErroValidacao } = require('../errors');
 
-/** Cookie que lembra o e-mail do ultimo login (30 dias). */
+// Cookie que lembra o e-mail do ultimo login (30 dias).
 const COOKIE_EMAIL = 'ultimoEmail';
 const TRINTA_DIAS_MS = 30 * 24 * 60 * 60 * 1000;
 
-/** Mensagens exibidas na tela de login conforme o parametro GET "motivo". */
+// Mensagens exibidas na tela de login conforme o parametro GET "motivo".
 const MOTIVOS = Object.freeze({
   saiu: 'Voce saiu do ZapChat. Ate logo!',
   'conta-excluida': 'Sua conta foi excluida com sucesso.'
 });
 
 class AutenticacaoController {
-  /**
-   * GET /login - formulario de login.
-   * O e-mail vem preenchido pelo cookie, quando o usuario marcou "lembrar".
-   */
+  // GET /login - formulario de login.
+  // O e-mail vem preenchido pelo cookie, quando o usuario marcou "lembrar".
   static exibirLogin(req, res) {
     const emailLembrado = req.cookies?.[COOKIE_EMAIL] ?? '';
 
@@ -42,9 +33,7 @@ class AutenticacaoController {
     });
   }
 
-  /**
-   * POST /login - recebe as credenciais, confere no MongoDB e cria a sessao.
-   */
+  // POST /login - recebe as credenciais, confere no MongoDB e cria a sessao.
   static async entrar(req, res) {
     const corpo = Formulario.corpo(req);
     const email = Formulario.texto(corpo.email);
@@ -85,16 +74,12 @@ class AutenticacaoController {
     res.redirect(destino);
   }
 
-  /**
-   * GET /cadastro - formulario de criacao de conta.
-   */
+  // GET /cadastro - formulario de criacao de conta.
   static exibirCadastro(req, res) {
     res.render('autenticacao/cadastro', { titulo: 'Criar conta', dados: {}, erro: null });
   }
 
-  /**
-   * POST /cadastro - cria o usuario (senha gravada como hash) e ja inicia a sessao.
-   */
+  // POST /cadastro - cria o usuario (senha gravada como hash) e ja inicia a sessao.
   static async cadastrar(req, res) {
     const corpo = Formulario.corpo(req);
 
@@ -138,9 +123,7 @@ class AutenticacaoController {
     res.redirect('/painel');
   }
 
-  /**
-   * POST /logout - marca o usuario como offline e encerra a sessao.
-   */
+  // POST /logout - marca o usuario como offline e encerra a sessao.
   static async sair(req, res) {
     try {
       await Usuario.alterarStatus(req.usuario.id, 'offline');

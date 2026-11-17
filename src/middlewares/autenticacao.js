@@ -1,30 +1,11 @@
 'use strict';
 
-/**
- * Middlewares de autenticacao baseados em SESSAO (express-session).
- *
- * Ao fazer login, o controller grava em req.session.usuario os dados basicos
- * do usuario. O navegador recebe apenas um cookie com o identificador da
- * sessao (zapchat.sid); os dados ficam no servidor.
- *
- * Em cada requisicao a uma rota protegida, "exigirLogin" verifica se existe
- * usuario na sessao e se ele ainda existe no MongoDB. Caso contrario, lanca
- * ErroAutenticacao, que o tratador de erros transforma em redirecionamento
- * para a pagina de login (ou em HTTP 401 para clientes que pedem JSON).
- */
+// Controle de acesso usando a sessao (req.session.usuario).
 
 const { Usuario } = require('../models');
 const { ErroAutenticacao } = require('../errors');
 
-/**
- * Bloqueia o acesso de quem nao fez login.
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- * @returns {Promise<void>}
- * @throws {ErroAutenticacao}
- */
+// Bloqueia o acesso de quem nao fez login.
 async function exigirLogin(req, res, next) {
   const operacao = 'autenticacao.exigirLogin';
   const idDaSessao = req.session.usuario?.id;
@@ -55,14 +36,7 @@ async function exigirLogin(req, res, next) {
   next();
 }
 
-/**
- * Impede que um usuario ja logado abra as paginas de login e cadastro.
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- * @returns {void}
- */
+// Impede que um usuario ja logado abra as paginas de login e cadastro.
 function somenteVisitante(req, res, next) {
   if (req.session.usuario) return res.redirect('/painel');
   next();

@@ -1,13 +1,6 @@
 'use strict';
 
-/**
- * CONTROLLER - usuarios: busca, perfil publico e "meu perfil".
- *
- * Exemplos de parametros:
- *   GET  /usuarios?busca=ana&pagina=2  -> req.query
- *   GET  /usuarios/:id                 -> req.params
- *   POST /perfil/atualizar             -> req.body
- */
+// Lista de usuarios, perfil publico e meu perfil.
 
 const Controlador = require('./Controlador');
 const ChatService = require('../services/ChatService');
@@ -15,13 +8,11 @@ const { Usuario, Contato, Conversa } = require('../models');
 const Formulario = require('../utils/Formulario');
 const { ErroValidacao } = require('../errors');
 
-/** Quantidade de usuarios por pagina na listagem. */
+// Quantidade de usuarios por pagina na listagem.
 const POR_PAGINA = 10;
 
 class UsuarioController {
-  /**
-   * GET /usuarios - lista paginada ou busca por nome, apelido ou e-mail.
-   */
+  // GET /usuarios - lista paginada ou busca por nome, apelido ou e-mail.
   static async listar(req, res) {
     const busca = Formulario.texto(req.query.busca);
     const pagina = Formulario.inteiro(req.query.pagina, 'pagina', { padrao: 1, min: 1, max: 1000 });
@@ -57,9 +48,7 @@ class UsuarioController {
     });
   }
 
-  /**
-   * GET /usuarios/:id - perfil publico de um usuario.
-   */
+  // GET /usuarios/:id - perfil publico de um usuario.
   static async detalhar(req, res) {
     const usuario = await Usuario.obterPorId(req.params.id);
 
@@ -78,18 +67,9 @@ class UsuarioController {
     });
   }
 
-  // ---------------------------------------------------------------------------
   // Meu perfil
-  // ---------------------------------------------------------------------------
 
-  /**
-   * Renderiza a pagina "Meu perfil".
-   *
-   * @param {import('express').Response} res
-   * @param {Usuario} usuario Usuario logado.
-   * @param {object} [extras] Dados digitados e erro do formulario de perfil.
-   * @returns {void}
-   */
+  // Renderiza a pagina "Meu perfil".
   static renderizarPerfil(res, usuario, { dados = null, erro = null, status = 200 } = {}) {
     res.status(status).render('usuarios/perfil', {
       titulo: 'Meu perfil',
@@ -100,12 +80,12 @@ class UsuarioController {
     });
   }
 
-  /** GET /perfil */
+  // GET /perfil
   static exibirPerfil(req, res) {
     UsuarioController.renderizarPerfil(res, req.usuario);
   }
 
-  /** POST /perfil/atualizar - nome, apelido, telefone, avatar e recado. */
+  // POST /perfil/atualizar - nome, apelido, telefone, avatar e recado.
   static async atualizarPerfil(req, res) {
     const corpo = Formulario.corpo(req);
 
@@ -138,7 +118,7 @@ class UsuarioController {
     res.redirect('/perfil');
   }
 
-  /** POST /perfil/status - online, ausente, ocupado ou offline. */
+  // POST /perfil/status - online, ausente, ocupado ou offline.
   static async alterarStatus(req, res) {
     const status = Formulario.texto(Formulario.corpo(req).status);
 
@@ -152,7 +132,7 @@ class UsuarioController {
     res.redirect(Controlador.destinoSeguro(Formulario.corpo(req).voltar, '/perfil'));
   }
 
-  /** POST /perfil/senha - confere a senha atual antes de gravar a nova. */
+  // POST /perfil/senha - confere a senha atual antes de gravar a nova.
   static async alterarSenha(req, res) {
     const corpo = Formulario.corpo(req);
     const senhaAtual = Formulario.senha(corpo.senhaAtual);
@@ -176,7 +156,7 @@ class UsuarioController {
     res.redirect('/perfil#senha');
   }
 
-  /** POST /perfil/excluir - exclui a conta (com confirmacao de senha) e encerra a sessao. */
+  // POST /perfil/excluir - exclui a conta (com confirmacao de senha) e encerra a sessao.
   static async excluirConta(req, res) {
     const senha = Formulario.senha(Formulario.corpo(req).senha);
 

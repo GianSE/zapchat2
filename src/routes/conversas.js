@@ -1,11 +1,7 @@
 'use strict';
 
-/**
- * Rotas de conversas e grupos. Montadas em "/conversas" e todas protegidas.
- *
- * As rotas fixas (/novo, /privada...) sao declaradas antes de "/:id" para que
- * o Express nao as confunda com um identificador.
- */
+// Rotas de /conversas (todas exigem login).
+// As rotas fixas ficam antes de /:id para nao serem confundidas com um id.
 
 const express = require('express');
 const ConversaController = require('../controllers/ConversaController');

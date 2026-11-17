@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- * Rotas de usuarios e do perfil do usuario logado. Todas protegidas.
- */
+// Usuarios e meu perfil (todas exigem login).
 
 const express = require('express');
 const UsuarioController = require('../controllers/UsuarioController');

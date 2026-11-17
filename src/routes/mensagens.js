@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- * Rotas de mensagens e reacoes. Montadas em "/mensagens" e todas protegidas.
- */
+// Rotas de /mensagens (todas exigem login).
 
 const express = require('express');
 const MensagemController = require('../controllers/MensagemController');

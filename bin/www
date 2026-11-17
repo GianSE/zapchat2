@@ -1,15 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
-/**
- * Inicializacao do servidor HTTP (arquivo no formato do express-generator).
- *
- * 1. registra os tratadores globais de excecoes (nada encerra o servidor sem log);
- * 2. tenta conectar ao MongoDB e garantir os indices - se falhar, o servidor
- *    sobe mesmo assim e cada requisicao tenta reconectar (pagina 503);
- * 3. inicia o servidor HTTP;
- * 4. no Ctrl+C, fecha o servidor e a conexao com o banco.
- */
+// Inicia o servidor. Se o MongoDB estiver desligado, o servidor sobe mesmo
+// assim e tenta conectar de novo a cada requisicao.
 
 const http = require('node:http');
 
@@ -22,7 +15,7 @@ const logger = require('../src/utils/Logger');
 const porta = config.servidor.porta;
 app.set('port', porta);
 
-// --- Excecoes fora do ciclo das requisicoes -----------------------------------
+// Excecoes fora do ciclo das requisicoes
 process.on('unhandledRejection', (motivo) => {
   const erro = motivo instanceof Error ? motivo : new Error(String(motivo));
   logger.erro(erro, { operacao: 'process.unhandledRejection' });
@@ -32,7 +25,7 @@ process.on('uncaughtException', (erro) => {
   logger.erro(erro, { operacao: 'process.uncaughtException' });
 });
 
-// --- Servidor ------------------------------------------------------------------
+// Servidor
 const servidor = http.createServer(app);
 
 servidor.on('error', (erro) => {
@@ -48,10 +41,7 @@ servidor.on('error', (erro) => {
   process.exit(1);
 });
 
-/**
- * Conecta ao MongoDB e cria os indices antes de aceitar requisicoes.
- * @returns {Promise<void>}
- */
+// Conecta ao MongoDB e cria os indices antes de aceitar requisicoes.
 async function prepararBanco() {
   try {
     await Database.obterInstancia().conectar();
@@ -64,10 +54,7 @@ async function prepararBanco() {
   }
 }
 
-/**
- * Encerra o servidor e a conexao com o banco.
- * @returns {Promise<void>}
- */
+// Encerra o servidor e a conexao com o banco.
 async function encerrar() {
   console.log('\nEncerrando o ZapChat 2...');
   servidor.close();

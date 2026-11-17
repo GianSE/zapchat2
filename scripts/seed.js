@@ -1,21 +1,13 @@
 'use strict';
 
-/**
- * Carga de dados de exemplo (reaproveitada do Projeto 1).
- *
- * Limpa as colecoes, recria os indices e cadastra usuarios, contatos, conversas
- * privadas, grupos, mensagens e reacoes - tudo pelas mesmas classes do Model
- * usadas pelas rotas do Express.
- *
- * Execucao: npm run seed
- */
+// Carrega os dados de exemplo (mesmos do Projeto 1). Uso: npm run seed
 
 const executar = require('./executar');
 const Manutencao = require('../src/database/Manutencao');
 const ChatService = require('../src/services/ChatService');
 const { Usuario, Mensagem } = require('../src/models');
 
-/** Usuarios cadastrados pelo script. */
+// Usuarios cadastrados pelo script.
 const USUARIOS = [
   {
     chave: 'ana',
@@ -69,7 +61,7 @@ const USUARIOS = [
   }
 ];
 
-/** Vinculos de agenda criados pelo script. */
+// Vinculos de agenda criados pelo script.
 const CONTATOS = [
   { de: 'ana', para: 'bruno', apelido: 'Bruno do trabalho', favorito: true },
   { de: 'ana', para: 'carla', apelido: 'Carla monitora' },
@@ -82,11 +74,7 @@ const CONTATOS = [
   { de: 'eva', para: 'diego', apelido: 'Diego (nao responder)', bloqueado: true }
 ];
 
-/**
- * Popula o banco de dados com os dados de exemplo.
- *
- * @returns {Promise<object>} Identificadores criados, para uso em outros scripts.
- */
+// Popula o banco de dados com os dados de exemplo.
 async function popularBase() {
   await Manutencao.limparColecoes();
   await Manutencao.criarIndices();

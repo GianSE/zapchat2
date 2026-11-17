@@ -1,17 +1,7 @@
 'use strict';
 
-/**
- * Aplicacao Express do ZapChat 2.
- *
- * Estrutura baseada no projeto gerado pelo express-generator
- * (app.js + bin/www + routes + views + public), organizada em MVC:
- *   - Model:      src/models e src/services   (reaproveitados do Projeto 1)
- *   - View:       src/views                   (templates EJS)
- *   - Controller: src/controllers             (recebem a requisicao e chamam o Model)
- *   - Rotas:      src/routes                  (ligam URL + metodo HTTP ao controller)
- *
- * O servidor HTTP e iniciado em bin/www.
- */
+// Configuracao do Express: views, middlewares, sessao e rotas.
+// O servidor e iniciado no bin/www.
 
 const path = require('node:path');
 const express = require('express');
@@ -35,7 +25,7 @@ const rotasMensagens = require('./src/routes/mensagens');
 
 const app = express();
 
-// --- Templates (View) ---------------------------------------------------------
+// Templates (View)
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.set('view engine', 'ejs');
 
@@ -43,7 +33,7 @@ app.set('view engine', 'ejs');
 app.locals.formatar = Formatacao;
 app.locals.nomeApp = 'ZapChat 2';
 
-// --- Middlewares ---------------------------------------------------------------
+// Middlewares
 app.use(morgan('dev')); // registra cada requisicao no terminal
 app.use(express.json()); // corpo POST em JSON (ferramentas de teste de API)
 app.use(express.urlencoded({ extended: false })); // corpo POST de formularios HTML
@@ -70,7 +60,7 @@ app.use(
 app.use(avisos);
 app.use(garantirConexao);
 
-// --- Rotas ---------------------------------------------------------------------
+// Rotas
 app.use('/', rotasIndex);
 app.use('/', rotasAutenticacao);
 app.use('/', rotasUsuarios);
@@ -78,7 +68,7 @@ app.use('/contatos', rotasContatos);
 app.use('/conversas', rotasConversas);
 app.use('/mensagens', rotasMensagens);
 
-// --- Erros ---------------------------------------------------------------------
+// Erros
 app.use(rotaNaoEncontrada); // 404
 app.use(tratarErros); // tratamento centralizado + log
 

@@ -1,21 +1,12 @@
 'use strict';
 
-/**
- * Executa uma rotina de manutencao do banco (setup, seed, reset) com o mesmo
- * cuidado do Projeto 1: conecta, executa, trata as excecoes, registra no log
- * e sempre fecha a conexao.
- */
+// Conecta no banco, executa a rotina do script e fecha a conexao.
 
 const Database = require('../src/database/Database');
 const logger = require('../src/utils/Logger');
 const config = require('../src/config/config');
 const { ErroAplicacao, ErroConexao } = require('../src/errors');
 
-/**
- * @param {string} nome Nome da rotina (para o log).
- * @param {() => Promise<void>} rotina Rotina a executar.
- * @returns {Promise<void>}
- */
 async function executar(nome, rotina) {
   const banco = Database.obterInstancia();
 

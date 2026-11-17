@@ -1,10 +1,6 @@
 'use strict';
 
-/**
- * Rotas de autenticacao (login, cadastro e logout).
- *
- * Login e cadastro sao publicos; o logout exige uma sessao ativa.
- */
+// Login e cadastro sao publicos; logout exige sessao.
 
 const express = require('express');
 const AutenticacaoController = require('../controllers/AutenticacaoController');

@@ -1,16 +1,6 @@
 'use strict';
 
-/**
- * CONTROLLER - mensagens (CRUD de Mensagem) e reacoes.
- *
- *   POST /mensagens                       enviar mensagem
- *   GET  /mensagens/busca?termo=&conversaId=  pesquisar mensagens
- *   GET  /mensagens/:id/editar            formulario de edicao
- *   POST /mensagens/atualizar             editar o conteudo
- *   POST /mensagens/excluir               apagar para todos / excluir definitivamente
- *   POST /mensagens/fixar                 fixar ou desafixar
- *   POST /mensagens/reagir                adicionar ou remover reacao
- */
+// Mensagens e reacoes.
 
 const { ObjectId } = require('mongodb');
 const Controlador = require('./Controlador');
@@ -19,11 +9,11 @@ const { Conversa, Mensagem } = require('../models');
 const Formulario = require('../utils/Formulario');
 const Validador = require('../utils/Validador');
 
-/** Modos de exclusao aceitos pelo formulario. */
+// Modos de exclusao aceitos pelo formulario.
 const MODOS_EXCLUSAO = Object.freeze(['todos', 'definitivo']);
 
 class MensagemController {
-  /** POST /mensagens - envia texto ou midia (anexo por URL). */
+  // POST /mensagens - envia texto ou midia (anexo por URL).
   static async enviar(req, res) {
     const corpo = Formulario.corpo(req);
     const conversaId = Formulario.texto(corpo.conversaId);
@@ -67,7 +57,7 @@ class MensagemController {
     res.redirect(Controlador.caminhoConversa(conversaId));
   }
 
-  /** GET /mensagens/busca - pesquisa nas conversas do usuario logado. */
+  // GET /mensagens/busca - pesquisa nas conversas do usuario logado.
   static async buscar(req, res) {
     const eu = req.usuario.id;
     const termo = Formulario.texto(req.query.termo);
@@ -111,7 +101,7 @@ class MensagemController {
     });
   }
 
-  /** GET /mensagens/:id/editar - somente o autor. */
+  // GET /mensagens/:id/editar - somente o autor.
   static async exibirEdicao(req, res) {
     const mensagem = await Mensagem.obterDoAutor(req.params.id, req.usuario.id);
 
@@ -121,7 +111,7 @@ class MensagemController {
     });
   }
 
-  /** POST /mensagens/atualizar */
+  // POST /mensagens/atualizar
   static async atualizar(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);
@@ -139,7 +129,7 @@ class MensagemController {
     res.redirect(ObjectId.isValid(id ?? '') ? `/mensagens/${id}/editar` : '/conversas');
   }
 
-  /** POST /mensagens/excluir - modo "todos" (logica) ou "definitivo" (remove do banco). */
+  // POST /mensagens/excluir - modo "todos" (logica) ou "definitivo" (remove do banco).
   static async excluir(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);
@@ -169,7 +159,7 @@ class MensagemController {
     res.redirect(destino);
   }
 
-  /** POST /mensagens/fixar */
+  // POST /mensagens/fixar
   static async fixar(req, res) {
     const id = Formulario.texto(Formulario.corpo(req).id);
     let destino = '/conversas';
@@ -185,7 +175,7 @@ class MensagemController {
     res.redirect(destino);
   }
 
-  /** POST /mensagens/reagir - reagir de novo com o mesmo emoji remove a reacao. */
+  // POST /mensagens/reagir - reagir de novo com o mesmo emoji remove a reacao.
   static async reagir(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);

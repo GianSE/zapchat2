@@ -1,10 +1,6 @@
 'use strict';
 
-/**
- * Remove todos os documentos das colecoes do projeto (mantem os indices).
- *
- * Execucao: npm run reset
- */
+// Apaga todos os documentos (os indices continuam). Uso: npm run reset
 
 const executar = require('./executar');
 const Manutencao = require('../src/database/Manutencao');

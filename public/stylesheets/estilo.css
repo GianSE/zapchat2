@@ -1,4 +1,4 @@
-/* ZapChat 2 - estilos da interface (HTML gerado pelos templates EJS) */
+/* Estilos do ZapChat 2 */
 
 :root {
   --verde: #0f8f6f;
@@ -32,7 +32,7 @@ h2 { font-size: 1.15rem; margin: 0 0 .75rem; }
 h3 { font-size: 1rem; margin: 0 0 .5rem; }
 small, .suave { color: var(--suave); }
 
-/* ---------- Topo e navegacao ---------- */
+/* Topo e navegacao */
 .topo {
   background: var(--verde);
   color: #fff;
@@ -59,7 +59,7 @@ small, .suave { color: var(--suave); }
 
 .conteudo { max-width: 1040px; margin: 0 auto; padding: 1.25rem 1rem; }
 
-/* ---------- Componentes ---------- */
+/* Componentes */
 .cartao {
   background: var(--cartao);
   border: 1px solid var(--borda);
@@ -110,14 +110,14 @@ textarea { min-height: 70px; resize: vertical; }
 .campos-2 { display: grid; gap: 0 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .acoes { margin-top: 1rem; display: flex; gap: .5rem; flex-wrap: wrap; }
 
-/* ---------- Avisos ---------- */
+/* Avisos */
 .aviso { border-radius: 8px; padding: .7rem 1rem; margin-bottom: 1rem; border: 1px solid transparent; }
 .aviso ul { margin: .35rem 0 0; padding-left: 1.2rem; }
 .aviso.erro { background: var(--erro-fundo); border-color: #f5c2bd; color: var(--erro); }
 .aviso.sucesso { background: var(--sucesso-fundo); border-color: #b9e3cb; color: #135c37; }
 .aviso.info { background: var(--info-fundo); border-color: #c5d7f2; color: #1c4588; }
 
-/* ---------- Listas ---------- */
+/* Listas */
 .lista { list-style: none; margin: 0; padding: 0; }
 .lista > li { padding: .7rem 0; border-bottom: 1px solid var(--borda); }
 .lista > li:last-child { border-bottom: none; }
@@ -146,7 +146,7 @@ th { color: var(--suave); font-weight: 600; font-size: .9rem; }
 
 .paginacao { display: flex; gap: .5rem; align-items: center; margin-top: 1rem; }
 
-/* ---------- Conversa ---------- */
+/* Conversa */
 .conversa-layout { display: grid; gap: 1rem; grid-template-columns: 1fr 260px; }
 @media (max-width: 800px) { .conversa-layout { grid-template-columns: 1fr; } }
 

@@ -47,9 +47,9 @@
 
   <% if (!busca && totalPaginas > 1) { %>
     <div class="paginacao">
-      <% if (pagina > 1) { %><a class="botao pequeno secundario" href="/usuarios?pagina=<%= pagina - 1 %>">← anterior</a><% } %>
+      <% if (pagina > 1) { %><a class="botao pequeno secundario" href="/usuarios?pagina=<%= pagina - 1 %>">Anterior</a><% } %>
       <span>Página <%= pagina %> de <%= totalPaginas %></span>
-      <% if (pagina < totalPaginas) { %><a class="botao pequeno secundario" href="/usuarios?pagina=<%= pagina + 1 %>">próxima →</a><% } %>
+      <% if (pagina < totalPaginas) { %><a class="botao pequeno secundario" href="/usuarios?pagina=<%= pagina + 1 %>">Próxima</a><% } %>
     </div>
   <% } %>
 </section>

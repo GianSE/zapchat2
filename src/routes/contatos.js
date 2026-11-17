@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- * Rotas da agenda de contatos. Montadas em "/contatos" e todas protegidas.
- */
+// Rotas de /contatos (todas exigem login).
 
 const express = require('express');
 const ContatoController = require('../controllers/ContatoController');

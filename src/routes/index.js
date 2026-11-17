@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- * Rotas gerais: pagina inicial, painel e estatisticas.
- */
+// Pagina inicial, painel e estatisticas.
 
 const express = require('express');
 const PainelController = require('../controllers/PainelController');

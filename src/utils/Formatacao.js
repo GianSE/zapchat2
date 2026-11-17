@@ -1,23 +1,13 @@
 'use strict';
 
-/**
- * Funcoes de formatacao usadas dentro dos templates EJS (Projeto 2).
- *
- * Sao registradas em app.locals, ficando disponiveis em todas as views. Nao
- * acessam o banco nem conhecem as entidades: apenas formatam valores prontos.
- */
+// Funcoes usadas nas views para formatar datas, status e reacoes.
 
 const FUSO = 'America/Sao_Paulo';
 
 class Formatacao {
-  /**
-   * Data e hora no formato dd/mm/aaaa hh:mm.
-   *
-   * @param {Date|string|null} valor
-   * @returns {string}
-   */
+  // Data e hora no formato dd/mm/aaaa hh:mm.
   static dataHora(valor) {
-    if (!valor) return '—';
+    if (!valor) return '-';
 
     return new Date(valor).toLocaleString('pt-BR', {
       timeZone: FUSO,
@@ -29,12 +19,7 @@ class Formatacao {
     });
   }
 
-  /**
-   * Somente a hora (hh:mm) quando a data e de hoje; caso contrario, dd/mm.
-   *
-   * @param {Date|string|null} valor
-   * @returns {string}
-   */
+  // Somente a hora (hh:mm) quando a data e de hoje; caso contrario, dd/mm.
   static horaCurta(valor) {
     if (!valor) return '';
 
@@ -49,24 +34,13 @@ class Formatacao {
     return data.toLocaleDateString('pt-BR', { timeZone: FUSO, day: '2-digit', month: '2-digit' });
   }
 
-  /**
-   * Rotulo do status de presenca.
-   *
-   * @param {string} status
-   * @returns {string}
-   */
+  // Rotulo do status de presenca.
   static status(status) {
     const rotulos = { online: 'Online', ausente: 'Ausente', ocupado: 'Ocupado', offline: 'Offline' };
-    return rotulos[status] ?? status ?? '—';
+    return rotulos[status] ?? status ?? '-';
   }
 
-  /**
-   * Agrupa a lista de reacoes de uma mensagem por emoji.
-   *
-   * @param {Array<{emoji: string, usuarioId: *}>} reacoes
-   * @param {string} usuarioId Usuario logado (para destacar as proprias reacoes).
-   * @returns {Array<{emoji: string, total: number, minha: boolean}>}
-   */
+  // Agrupa a lista de reacoes de uma mensagem por emoji.
   static agruparReacoes(reacoes = [], usuarioId = null) {
     const grupos = new Map();
 

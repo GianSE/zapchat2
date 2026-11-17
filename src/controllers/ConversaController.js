@@ -1,19 +1,6 @@
 'use strict';
 
-/**
- * CONTROLLER - conversas privadas e grupos (CRUD de Conversa).
- *
- *   GET  /conversas                         consultar as conversas
- *   GET  /conversas/:id?limite=&responder=  abrir uma conversa
- *   POST /conversas/privada                 abrir conversa privada
- *   GET  /conversas/novo                    formulario de novo grupo
- *   POST /conversas                         cadastrar grupo
- *   GET  /conversas/:id/editar              formulario do grupo (administrador)
- *   POST /conversas/atualizar               atualizar nome, descricao e icone
- *   POST /conversas/participantes           adicionar participante
- *   POST /conversas/participantes/remover   remover participante / sair do grupo
- *   POST /conversas/excluir                 excluir conversa
- */
+// Conversas privadas e grupos.
 
 const { ObjectId } = require('mongodb');
 const Controlador = require('./Controlador');
@@ -23,11 +10,11 @@ const Formulario = require('../utils/Formulario');
 const logger = require('../utils/Logger');
 const { ErroValidacao } = require('../errors');
 
-/** Quantidade de mensagens exibidas ao abrir uma conversa. */
+// Quantidade de mensagens exibidas ao abrir uma conversa.
 const LIMITE_PADRAO = 30;
 
 class ConversaController {
-  /** GET /conversas */
+  // GET /conversas
   static async listar(req, res) {
     const [conversas, naoLidas, agenda] = await Promise.all([
       Conversa.listarPainelDoUsuario(req.usuario.id),
@@ -48,7 +35,7 @@ class ConversaController {
     });
   }
 
-  /** GET /conversas/:id - historico, formulario de envio e reacoes. */
+  // GET /conversas/:id - historico, formulario de envio e reacoes.
   static async detalhar(req, res) {
     const limite = Formulario.inteiro(req.query.limite, 'limite', { padrao: LIMITE_PADRAO, min: 1, max: 200 });
     const responder = Formulario.texto(req.query.responder);
@@ -106,7 +93,7 @@ class ConversaController {
     });
   }
 
-  /** POST /conversas/privada - abre (ou reaproveita) a conversa com outro usuario. */
+  // POST /conversas/privada - abre (ou reaproveita) a conversa com outro usuario.
   static async abrirPrivada(req, res) {
     const corpo = Formulario.corpo(req);
     const destinatarioId = Formulario.texto(corpo.destinatarioId);
@@ -121,18 +108,9 @@ class ConversaController {
     res.redirect(Controlador.destinoSeguro(corpo.voltar, '/conversas'));
   }
 
-  // ---------------------------------------------------------------------------
   // Grupos
-  // ---------------------------------------------------------------------------
 
-  /**
-   * Renderiza o formulario de novo grupo.
-   *
-   * @param {import('express').Request} req
-   * @param {import('express').Response} res
-   * @param {object} [extras]
-   * @returns {Promise<void>}
-   */
+  // Renderiza o formulario de novo grupo.
   static async renderizarNovoGrupo(req, res, { dados = {}, erro = null, status = 200 } = {}) {
     const agenda = await Contato.listarAgenda(req.usuario.id);
 
@@ -144,12 +122,12 @@ class ConversaController {
     });
   }
 
-  /** GET /conversas/novo */
+  // GET /conversas/novo
   static async exibirNovoGrupo(req, res) {
     await ConversaController.renderizarNovoGrupo(req, res);
   }
 
-  /** POST /conversas - cadastra o grupo e envia a mensagem de boas-vindas. */
+  // POST /conversas - cadastra o grupo e envia a mensagem de boas-vindas.
   static async criarGrupo(req, res) {
     const corpo = Formulario.corpo(req);
 
@@ -171,7 +149,7 @@ class ConversaController {
     }
   }
 
-  /** GET /conversas/:id/editar - somente administradores. */
+  // GET /conversas/:id/editar - somente administradores.
   static async exibirEdicao(req, res) {
     const conversa = await Conversa.garantirAdministrador(req.params.id, req.usuario.id, 'ConversaController.exibirEdicao');
 
@@ -193,7 +171,7 @@ class ConversaController {
     });
   }
 
-  /** POST /conversas/atualizar */
+  // POST /conversas/atualizar
   static async atualizar(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);
@@ -213,7 +191,7 @@ class ConversaController {
     res.redirect(ConversaController.caminhoEdicao(id));
   }
 
-  /** POST /conversas/participantes - administrador adiciona um contato ao grupo. */
+  // POST /conversas/participantes - administrador adiciona um contato ao grupo.
   static async adicionarParticipante(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);
@@ -228,7 +206,7 @@ class ConversaController {
     res.redirect(ConversaController.caminhoEdicao(id));
   }
 
-  /** POST /conversas/participantes/remover - remove alguem ou sai do grupo. */
+  // POST /conversas/participantes/remover - remove alguem ou sai do grupo.
   static async removerParticipante(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);
@@ -246,7 +224,7 @@ class ConversaController {
     res.redirect(Controlador.destinoSeguro(corpo.voltar, ConversaController.caminhoEdicao(id)));
   }
 
-  /** POST /conversas/excluir - exclui a conversa com mensagens e reacoes. */
+  // POST /conversas/excluir - exclui a conversa com mensagens e reacoes.
   static async excluir(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);
@@ -263,12 +241,7 @@ class ConversaController {
     res.redirect(ObjectId.isValid(id ?? '') ? Controlador.caminhoConversa(id) : '/conversas');
   }
 
-  /**
-   * Caminho da pagina de edicao do grupo (ou da lista, se o id for invalido).
-   *
-   * @param {string|null} id
-   * @returns {string}
-   */
+  // Caminho da pagina de edicao do grupo (ou da lista, se o id for invalido).
   static caminhoEdicao(id) {
     return ObjectId.isValid(id ?? '') ? `/conversas/${id}/editar` : '/conversas';
   }

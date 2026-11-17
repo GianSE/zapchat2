@@ -1,23 +1,17 @@
 'use strict';
 
-/**
- * CONTROLLER - pagina inicial do usuario logado e estatisticas gerais.
- */
+// Painel inicial e estatisticas.
 
 const ChatService = require('../services/ChatService');
 
 class PainelController {
-  /**
-   * GET / - envia para o painel (logado) ou para o login (visitante).
-   */
+  // GET / - envia para o painel (logado) ou para o login (visitante).
   static inicio(req, res) {
     res.redirect(req.session.usuario ? '/painel' : '/login');
   }
 
-  /**
-   * GET /painel - conversas, mensagens nao lidas e agenda do usuario logado.
-   * Reaproveita ChatService.painelDoUsuario, criado no Projeto 1.
-   */
+  // GET /painel - conversas, mensagens nao lidas e agenda do usuario logado.
+  // Reaproveita ChatService.painelDoUsuario, criado no Projeto 1.
   static async exibir(req, res) {
     const painel = await ChatService.painelDoUsuario(req.usuario.id);
     const naoLidas = new Map(painel.naoLidas.map((item) => [String(item.conversaId), item.naoLidas]));
@@ -37,9 +31,7 @@ class PainelController {
     });
   }
 
-  /**
-   * GET /estatisticas - numeros gerais do ZapChat (agregacoes do MongoDB).
-   */
+  // GET /estatisticas - numeros gerais do ZapChat (agregacoes do MongoDB).
   static async estatisticas(req, res) {
     const estatisticas = await ChatService.estatisticasGerais();
 

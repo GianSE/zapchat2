@@ -1,14 +1,6 @@
 'use strict';
 
-/**
- * CONTROLLER - agenda de contatos do usuario logado (CRUD de Contato).
- *
- *   GET  /contatos?filtro=favoritos  consultar a agenda
- *   POST /contatos                   adicionar contato
- *   GET  /contatos/:id/editar        formulario de edicao
- *   POST /contatos/atualizar         atualizar apelido, favorito e bloqueio
- *   POST /contatos/excluir           remover da agenda
- */
+// Agenda de contatos do usuario logado.
 
 const { ObjectId } = require('mongodb');
 const Controlador = require('./Controlador');
@@ -17,11 +9,11 @@ const { Contato, Usuario } = require('../models');
 const Formulario = require('../utils/Formulario');
 const Validador = require('../utils/Validador');
 
-/** Filtros aceitos pelo parametro GET "filtro". */
+// Filtros aceitos pelo parametro GET "filtro".
 const FILTROS = Object.freeze(['todos', 'favoritos', 'bloqueados']);
 
 class ContatoController {
-  /** GET /contatos */
+  // GET /contatos
   static async listar(req, res) {
     const filtro = Formulario.texto(req.query.filtro) ?? 'todos';
 
@@ -39,10 +31,8 @@ class ContatoController {
     res.render('contatos/lista', { titulo: 'Contatos', agenda, filtro, filtros: FILTROS, dados: {} });
   }
 
-  /**
-   * POST /contatos - adiciona pelo e-mail digitado ou pelo id (botao na lista
-   * de usuarios).
-   */
+  // POST /contatos - adiciona pelo e-mail digitado ou pelo id (botao na lista
+  // de usuarios).
   static async adicionar(req, res) {
     const corpo = Formulario.corpo(req);
     const contatoId = Formulario.texto(corpo.contatoId);
@@ -64,7 +54,7 @@ class ContatoController {
     res.redirect(voltar);
   }
 
-  /** GET /contatos/:id/editar */
+  // GET /contatos/:id/editar
   static async exibirEdicao(req, res) {
     const contato = await Contato.obterDoUsuario(req.params.id, req.usuario.id);
     const usuario = await Usuario.obterPorId(contato.contatoId);
@@ -76,7 +66,7 @@ class ContatoController {
     });
   }
 
-  /** POST /contatos/atualizar */
+  // POST /contatos/atualizar
   static async atualizar(req, res) {
     const corpo = Formulario.corpo(req);
     const id = Formulario.texto(corpo.id);
@@ -99,7 +89,7 @@ class ContatoController {
     res.redirect(ObjectId.isValid(id ?? '') ? `/contatos/${id}/editar` : '/contatos');
   }
 
-  /** POST /contatos/excluir */
+  // POST /contatos/excluir
   static async excluir(req, res) {
     const id = Formulario.texto(Formulario.corpo(req).id);
 
