@@ -1,0 +1,19 @@
+<%# Uma linha da lista de conversas: { id, icone, titulo, tipo, ultimaMensagem, naoLidas, participantes } %>
+<li class="item">
+  <span class="avatar"><%= conversa.icone %></span>
+  <div class="info">
+    <a href="/conversas/<%= conversa.id %>#fim"><%= conversa.titulo %></a>
+    <% if (conversa.tipo === 'grupo') { %><span class="selo">grupo · <%= conversa.participantes.length %></span><% } %>
+    <div class="previa">
+      <% if (conversa.ultimaMensagem) { %>
+        <%= conversa.ultimaMensagem.autorNome %>: <%= conversa.ultimaMensagem.texto %>
+      <% } else { %>
+        Nenhuma mensagem ainda
+      <% } %>
+    </div>
+  </div>
+  <div style="text-align:right">
+    <small><%= formatar.horaCurta(conversa.ultimaMensagem && conversa.ultimaMensagem.enviadaEm) %></small><br>
+    <% if (conversa.naoLidas > 0) { %><span class="selo contador"><%= conversa.naoLidas %></span><% } %>
+  </div>
+</li>

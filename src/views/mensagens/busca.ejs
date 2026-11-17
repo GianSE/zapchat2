@@ -1,0 +1,45 @@
+<%- include('../partials/topo') %>
+
+<h1>Buscar mensagens</h1>
+
+<form class="cartao" method="get" action="/mensagens/busca">
+  <div class="campos-2">
+    <div>
+      <label for="termo">Termo *</label>
+      <input type="search" id="termo" name="termo" value="<%= termo %>" placeholder="ex.: projeto">
+    </div>
+    <div>
+      <label for="conversaId">Conversa</label>
+      <select id="conversaId" name="conversaId">
+        <option value="">Todas as minhas conversas</option>
+        <% conversas.forEach((conversa) => { %>
+          <option value="<%= conversa._id %>" <%= String(conversa._id) === conversaId ? 'selected' : '' %>>
+            <%= conversa.icone %> <%= conversa.titulo %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+  <div class="acoes"><button type="submit">Buscar</button></div>
+</form>
+
+<%- include('../partials/erro-formulario') %>
+
+<% if (enviado && !erro) { %>
+  <section class="cartao">
+    <h2><%= resultados.length %> mensagem(ns) encontrada(s)</h2>
+    <ul class="lista">
+      <% resultados.forEach((msg) => { %>
+        <li>
+          <div class="linha entre">
+            <a href="/conversas/<%= msg.conversaId %>#m-<%= msg._id %>"><strong><%= msg.conversaTitulo %></strong></a>
+            <small><%= formatar.dataHora(msg.criadoEm) %></small>
+          </div>
+          <div><%= msg.conteudo %></div>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+<% } %>
+
+<%- include('../partials/rodape') %>

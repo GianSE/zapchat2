@@ -1,0 +1,37 @@
+<%- include('../partials/topo') %>
+
+<div class="linha entre">
+  <h1>Conversas</h1>
+  <a class="botao" href="/conversas/novo">+ Novo grupo</a>
+</div>
+
+<div class="conversa-layout">
+  <section class="cartao">
+    <% if (conversas.length === 0) { %>
+      <p class="suave">Nenhuma conversa ainda. Comece uma conversa privada com alguém da sua agenda.</p>
+    <% } else { %>
+      <ul class="lista">
+        <% conversas.forEach((conversa) => { %><%- include('../partials/item-conversa', { conversa }) %><% }) %>
+      </ul>
+    <% } %>
+  </section>
+
+  <aside class="cartao">
+    <h2>Nova conversa privada</h2>
+    <% if (agenda.length === 0) { %>
+      <p class="suave">Adicione contatos na <a href="/contatos">agenda</a> para conversar.</p>
+    <% } else { %>
+      <form method="post" action="/conversas/privada">
+        <label for="destinatarioId">Contato</label>
+        <select id="destinatarioId" name="destinatarioId">
+          <% agenda.forEach((contato) => { %>
+            <option value="<%= contato.contatoId %>"><%= contato.avatar %> <%= contato.exibicao %></option>
+          <% }) %>
+        </select>
+        <div class="acoes"><button type="submit">Abrir conversa</button></div>
+      </form>
+    <% } %>
+  </aside>
+</div>
+
+<%- include('../partials/rodape') %>

@@ -1,0 +1,199 @@
+<%- include('../partials/topo') %>
+
+<div class="linha entre">
+  <h1>
+    <%= conversa.icone %> <%= titulo %>
+    <% if (!conversa.ehGrupo && outro) { %><span class="selo <%= outro.status %>"><%= formatar.status(outro.status) %></span><% } %>
+  </h1>
+  <div class="linha">
+    <a class="botao secundario pequeno" href="/mensagens/busca?conversaId=<%= conversa._id %>">Buscar nesta conversa</a>
+    <% if (conversa.ehGrupo && conversa.souAdministrador) { %>
+      <a class="botao secundario pequeno" href="/conversas/<%= conversa._id %>/editar">Configurar grupo</a>
+    <% } %>
+  </div>
+</div>
+<% if (conversa.descricao) { %><p class="suave"><%= conversa.descricao %></p><% } %>
+
+<div class="conversa-layout">
+  <section>
+    <div class="mensagens">
+      <% if (haMais) { %>
+        <p style="text-align:center;margin:0">
+          <a href="/conversas/<%= conversa._id %>?limite=<%= limite + 30 %>">Carregar mensagens anteriores</a>
+        </p>
+      <% } %>
+
+      <% if (mensagens.length === 0) { %>
+        <p class="suave" style="text-align:center">Nenhuma mensagem. Diga oi! 👋</p>
+      <% } %>
+
+      <% mensagens.forEach((msg) => {
+           const minha = String(msg.autorId) === usuarioLogado.id;
+           const classes = ['balao'];
+           if (msg.tipo === 'sistema') classes.push('sistema');
+           else if (minha) classes.push('minha');
+           if (msg.excluida) classes.push('apagada');
+           if (msg.fixada) classes.push('fixada');
+           const reacoes = formatar.agruparReacoes(msg.reacoes, usuarioLogado.id);
+      %>
+        <div class="<%= classes.join(' ') %>" id="m-<%= msg._id %>">
+          <% if (msg.tipo === 'sistema') { %>
+            <%= msg.conteudo %> · <%= formatar.horaCurta(msg.enviadaEm) %>
+          <% } else { %>
+            <% if (!minha) { %><div class="autor"><%= msg.autorAvatar %> <%= msg.autorNome %></div><% } %>
+            <% if (msg.respondendo) { %><div class="resposta">↪ <%= msg.respondendo %></div><% } %>
+            <% if (msg.anexo && !msg.excluida) { %>
+              <div class="anexo">📎 <%= msg.tipo %>:
+                <a href="<%= msg.anexo.url %>" target="_blank" rel="noopener noreferrer"><%= msg.anexo.nome %></a>
+                <% if (msg.anexo.tamanhoKb) { %><small>(<%= msg.anexo.tamanhoKb %> KB)</small><% } %>
+              </div>
+            <% } %>
+            <div class="texto"><%= msg.conteudo %></div>
+
+            <% if (reacoes.length) { %>
+              <div class="reacoes">
+                <% reacoes.forEach((r) => { %>
+                  <span class="selo <%= r.minha ? 'minha' : '' %>"><%= r.emoji %> <%= r.total %></span>
+                <% }) %>
+              </div>
+            <% } %>
+
+            <div class="meta">
+              <%= msg.fixada ? '📌 ' : '' %><%= msg.editada ? 'editada · ' : '' %><%= formatar.dataHora(msg.enviadaEm) %>
+              <% if (minha) { %> · lida por <%= msg.totalLeituras - 1 %><% } %>
+            </div>
+
+            <% if (!msg.excluida) { %>
+              <div class="acoes-msg">
+                <a href="/conversas/<%= conversa._id %>?responder=<%= msg._id %>#fim">Responder</a>
+
+                <details>
+                  <summary>Reagir</summary>
+                  <div class="painel-flutuante">
+                    <% emojis.forEach((emoji) => { %>
+                      <form class="inline" method="post" action="/mensagens/reagir">
+                        <input type="hidden" name="id" value="<%= msg._id %>">
+                        <button type="submit" name="emoji" value="<%= emoji %>" class="emoji-btn"><%= emoji %></button>
+                      </form>
+                    <% }) %>
+                  </div>
+                </details>
+
+                <form class="inline" method="post" action="/mensagens/fixar">
+                  <input type="hidden" name="id" value="<%= msg._id %>">
+                  <button type="submit" class="link"><%= msg.fixada ? 'Desafixar' : 'Fixar' %></button>
+                </form>
+
+                <% if (minha) { %>
+                  <a href="/mensagens/<%= msg._id %>/editar">Editar</a>
+                  <details>
+                    <summary>Excluir</summary>
+                    <div class="painel-flutuante">
+                      <form class="inline" method="post" action="/mensagens/excluir">
+                        <input type="hidden" name="id" value="<%= msg._id %>">
+                        <button type="submit" name="modo" value="todos" class="pequeno secundario">Apagar para todos</button>
+                        <button type="submit" name="modo" value="definitivo" class="pequeno perigo"
+                                onclick="return confirm('Excluir definitivamente do banco de dados?')">Excluir definitivamente</button>
+                      </form>
+                    </div>
+                  </details>
+                <% } %>
+              </div>
+            <% } %>
+          <% } %>
+        </div>
+      <% }) %>
+      <span id="fim"></span>
+    </div>
+
+    <form class="cartao envio" method="post" action="/mensagens">
+      <input type="hidden" name="conversaId" value="<%= conversa._id %>">
+
+      <% if (respondendo) { %>
+        <input type="hidden" name="respostaA" value="<%= respondendo.id %>">
+        <div class="respondendo">
+          Respondendo a: <em><%= respondendo.previa %></em>
+          · <a href="/conversas/<%= conversa._id %>#fim">cancelar</a>
+        </div>
+      <% } else if (rascunho && rascunho.respostaA) { %>
+        <input type="hidden" name="respostaA" value="<%= rascunho.respostaA %>">
+      <% } %>
+
+      <label for="conteudo">Mensagem</label>
+      <textarea id="conteudo" name="conteudo" placeholder="Digite sua mensagem..."><%= rascunho ? rascunho.conteudo : '' %></textarea>
+
+      <details <%= rascunho && rascunho.tipo && rascunho.tipo !== 'texto' ? 'open' : '' %>>
+        <summary>Enviar mídia (anexo por URL)</summary>
+        <div class="campos-2">
+          <div>
+            <label for="tipo">Tipo</label>
+            <select id="tipo" name="tipo">
+              <% tipos.forEach((tipo) => { %>
+                <option value="<%= tipo %>" <%= rascunho && rascunho.tipo === tipo ? 'selected' : '' %>><%= tipo %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div>
+            <label for="anexoNome">Nome do arquivo</label>
+            <input type="text" id="anexoNome" name="anexoNome" placeholder="foto.png">
+          </div>
+          <div>
+            <label for="anexoUrl">URL</label>
+            <input type="text" id="anexoUrl" name="anexoUrl" placeholder="https://...">
+          </div>
+          <div>
+            <label for="anexoTamanho">Tamanho (KB)</label>
+            <input type="text" id="anexoTamanho" name="anexoTamanho" placeholder="opcional">
+          </div>
+        </div>
+        <small>Para mídia, a mensagem vira a legenda. Para texto simples, deixe o tipo como "texto".</small>
+      </details>
+
+      <div class="acoes"><button type="submit">Enviar</button></div>
+    </form>
+  </section>
+
+  <aside>
+    <div class="cartao">
+      <h2><%= conversa.ehGrupo ? 'Participantes' : 'Conversa privada' %></h2>
+      <ul class="lista">
+        <% participantes.forEach((pessoa) => { %>
+          <li class="item">
+            <span class="avatar"><%= pessoa.avatar %></span>
+            <div class="info">
+              <% if (pessoa._id === usuarioLogado.id) { %>
+                <strong>Você</strong>
+              <% } else { %>
+                <a href="/usuarios/<%= pessoa._id %>"><%= pessoa.nomeExibicao %></a>
+              <% } %>
+              <% if (pessoa.administrador) { %><span class="selo">admin</span><% } %>
+              <div><span class="selo <%= pessoa.status %>"><%= formatar.status(pessoa.status) %></span></div>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <div class="cartao">
+      <h3>Opções</h3>
+      <% if (conversa.ehGrupo) { %>
+        <form method="post" action="/conversas/participantes/remover" onsubmit="return confirm('Sair deste grupo?')">
+          <input type="hidden" name="id" value="<%= conversa._id %>">
+          <input type="hidden" name="usuarioId" value="<%= usuarioLogado.id %>">
+          <input type="hidden" name="voltar" value="/conversas/<%= conversa._id %>">
+          <button type="submit" class="secundario">Sair do grupo</button>
+        </form>
+      <% } %>
+
+      <% if (!conversa.ehGrupo || conversa.souAdministrador) { %>
+        <form method="post" action="/conversas/excluir" style="margin-top:.5rem"
+              onsubmit="return confirm('Excluir a conversa e todas as mensagens?')">
+          <input type="hidden" name="id" value="<%= conversa._id %>">
+          <button type="submit" class="perigo">Excluir conversa</button>
+        </form>
+      <% } %>
+    </div>
+  </aside>
+</div>
+
+<%- include('../partials/rodape') %>

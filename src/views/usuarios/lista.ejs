@@ -1,0 +1,57 @@
+<%- include('../partials/topo') %>
+
+<h1>Usuários</h1>
+
+<form class="cartao linha" method="get" action="/usuarios">
+  <input type="search" name="busca" value="<%= busca %>" placeholder="Buscar por nome, apelido ou e-mail" style="flex:1">
+  <button type="submit">Buscar</button>
+  <% if (busca) { %><a class="botao secundario" href="/usuarios">Limpar</a><% } %>
+</form>
+
+<section class="cartao">
+  <% if (busca) { %><p class="suave"><%= usuarios.length %> resultado(s) para "<%= busca %>"</p><% } %>
+
+  <% if (usuarios.length === 0) { %>
+    <p class="suave">Nenhum usuário encontrado.</p>
+  <% } else { %>
+    <ul class="lista">
+      <% usuarios.forEach((usuario) => { %>
+        <li class="item">
+          <span class="avatar"><%= usuario.avatar %></span>
+          <div class="info">
+            <a href="/usuarios/<%= usuario._id %>"><%= usuario.nome %></a>
+            <% if (usuario.apelido) { %><small>@<%= usuario.apelido %></small><% } %>
+            <span class="selo <%= usuario.status %>"><%= formatar.status(usuario.status) %></span>
+            <div class="previa"><%= usuario.recado || '' %></div>
+          </div>
+          <div class="linha">
+            <% if (usuario.naAgenda) { %>
+              <span class="selo">na agenda</span>
+            <% } else { %>
+              <form class="inline" method="post" action="/contatos">
+                <input type="hidden" name="contatoId" value="<%= usuario._id %>">
+                <input type="hidden" name="voltar" value="/usuarios?busca=<%= encodeURIComponent(busca) %>&pagina=<%= pagina %>">
+                <button type="submit" class="pequeno secundario">+ Contato</button>
+              </form>
+            <% } %>
+            <form class="inline" method="post" action="/conversas/privada">
+              <input type="hidden" name="destinatarioId" value="<%= usuario._id %>">
+              <input type="hidden" name="voltar" value="/usuarios">
+              <button type="submit" class="pequeno">Conversar</button>
+            </form>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <% if (!busca && totalPaginas > 1) { %>
+    <div class="paginacao">
+      <% if (pagina > 1) { %><a class="botao pequeno secundario" href="/usuarios?pagina=<%= pagina - 1 %>">← anterior</a><% } %>
+      <span>Página <%= pagina %> de <%= totalPaginas %></span>
+      <% if (pagina < totalPaginas) { %><a class="botao pequeno secundario" href="/usuarios?pagina=<%= pagina + 1 %>">próxima →</a><% } %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/rodape') %>

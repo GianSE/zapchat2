@@ -1,0 +1,21 @@
+<%- include('../partials/topo') %>
+
+<div class="cartao" style="max-width:600px">
+  <p><a href="/conversas/<%= mensagem.conversaId %>#m-<%= mensagem._id %>">← voltar para a conversa</a></p>
+  <h1>Editar mensagem</h1>
+  <p class="suave">Enviada em <%= formatar.dataHora(mensagem.criadoEm) %><%= mensagem.editada ? ' · já editada antes' : '' %></p>
+
+  <form method="post" action="/mensagens/atualizar">
+    <input type="hidden" name="id" value="<%= mensagem._id %>">
+
+    <label for="conteudo">Conteúdo *</label>
+    <textarea id="conteudo" name="conteudo"><%= mensagem.conteudo %></textarea>
+
+    <div class="acoes">
+      <button type="submit">Salvar</button>
+      <a class="botao secundario" href="/conversas/<%= mensagem.conversaId %>#fim">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<%- include('../partials/rodape') %>

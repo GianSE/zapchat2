@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= titulo %> · <%= nomeApp %></title>
+  <link rel="stylesheet" href="/stylesheets/estilo.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="conteudo">
+      <a class="marca" href="/">💬 <%= nomeApp %></a>
+
+      <% if (usuarioLogado) { %>
+        <nav class="menu">
+          <% const itensMenu = [
+               ['/painel', 'Painel'], ['/conversas', 'Conversas'], ['/contatos', 'Contatos'],
+               ['/usuarios', 'Usuários'], ['/mensagens/busca', 'Buscar'], ['/estatisticas', 'Estatísticas']
+             ]; %>
+          <% itensMenu.forEach(([href, rotulo]) => { %>
+            <a href="<%= href %>" class="<%= caminhoAtual.startsWith(href) ? 'ativo' : '' %>"><%= rotulo %></a>
+          <% }) %>
+        </nav>
+
+        <div class="sessao">
+          <a href="/perfil" title="Meu perfil"><%= usuarioLogado.avatar %> <%= usuarioLogado.nomeExibicao || usuarioLogado.nome %></a>
+          <form class="inline" method="post" action="/logout">
+            <button type="submit" class="link">Sair</button>
+          </form>
+        </div>
+      <% } else { %>
+        <nav class="menu"></nav>
+        <div class="sessao">
+          <a href="/login">Entrar</a>
+          <a href="/cadastro">Criar conta</a>
+        </div>
+      <% } %>
+    </div>
+  </header>
+
+  <main class="conteudo">
+    <% avisos.forEach((aviso) => { %>
+      <div class="aviso <%= aviso.tipo %>">
+        <%= aviso.texto %>
+        <% if (aviso.itens && aviso.itens.length) { %>
+          <ul><% aviso.itens.forEach((item) => { %><li><%= item %></li><% }) %></ul>
+        <% } %>
+      </div>
+    <% }) %>

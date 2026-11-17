@@ -1,0 +1,45 @@
+<%- include('partials/topo') %>
+
+<h1>Estatísticas do ZapChat</h1>
+
+<div class="numeros" style="margin-bottom:1rem">
+  <div class="numero"><strong><%= estatisticas.totalUsuarios %></strong> usuários</div>
+  <div class="numero"><strong><%= estatisticas.totalConversas %></strong> conversas</div>
+  <div class="numero"><strong><%= estatisticas.totalGrupos %></strong> grupos</div>
+  <div class="numero"><strong><%= estatisticas.totalMensagens %></strong> mensagens</div>
+  <div class="numero"><strong><%= estatisticas.mensagensExcluidas %></strong> apagadas</div>
+</div>
+
+<div class="grade">
+  <section class="cartao">
+    <h2>Quem mais envia mensagens</h2>
+    <table>
+      <tr><th>#</th><th>Usuário</th><th>Mensagens</th></tr>
+      <% estatisticas.ranking.forEach((linha) => { %>
+        <tr><td><%= linha.posicao %></td><td><%= linha.autor %></td><td><%= linha.mensagens %></td></tr>
+      <% }) %>
+    </table>
+  </section>
+
+  <section class="cartao">
+    <h2>Reações mais usadas</h2>
+    <table>
+      <tr><th>Emoji</th><th>Total</th></tr>
+      <% estatisticas.emojis.forEach((linha) => { %>
+        <tr><td style="font-size:1.3rem"><%= linha.emoji %></td><td><%= linha.total %></td></tr>
+      <% }) %>
+    </table>
+  </section>
+
+  <section class="cartao">
+    <h2>Documentos por coleção</h2>
+    <table>
+      <tr><th>Coleção</th><th>Documentos</th></tr>
+      <% estatisticas.colecoes.forEach((linha) => { %>
+        <tr><td><%= linha.colecao %></td><td><%= linha.documentos %></td></tr>
+      <% }) %>
+    </table>
+  </section>
+</div>
+
+<%- include('partials/rodape') %>

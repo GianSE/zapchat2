@@ -1,0 +1,9 @@
+<%# Exibe o erro de um formulario: { titulo, mensagem, itens } %>
+<% if (typeof erro !== 'undefined' && erro) { %>
+  <div class="aviso erro">
+    <strong><%= erro.titulo %>:</strong> <%= erro.mensagem %>
+    <% if (erro.itens && erro.itens.length) { %>
+      <ul><% erro.itens.forEach((item) => { %><li><%= item %></li><% }) %></ul>
+    <% } %>
+  </div>
+<% } %>

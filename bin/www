@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+'use strict';
+
+/**
+ * Inicializacao do servidor HTTP (arquivo no formato do express-generator).
+ *
+ * 1. registra os tratadores globais de excecoes (nada encerra o servidor sem log);
+ * 2. tenta conectar ao MongoDB e garantir os indices - se falhar, o servidor
+ *    sobe mesmo assim e cada requisicao tenta reconectar (pagina 503);
+ * 3. inicia o servidor HTTP;
+ * 4. no Ctrl+C, fecha o servidor e a conexao com o banco.
+ */
+
+const http = require('node:http');
+
+const app = require('../app');
+const config = require('../src/config/config');
+const Database = require('../src/database/Database');
+const Manutencao = require('../src/database/Manutencao');
+const logger = require('../src/utils/Logger');
+
+const porta = config.servidor.porta;
+app.set('port', porta);
+
+// --- Excecoes fora do ciclo das requisicoes -----------------------------------
+process.on('unhandledRejection', (motivo) => {
+  const erro = motivo instanceof Error ? motivo : new Error(String(motivo));
+  logger.erro(erro, { operacao: 'process.unhandledRejection' });
+});
+
+process.on('uncaughtException', (erro) => {
+  logger.erro(erro, { operacao: 'process.uncaughtException' });
+});
+
+// --- Servidor ------------------------------------------------------------------
+const servidor = http.createServer(app);
+
+servidor.on('error', (erro) => {
+  if (erro.syscall !== 'listen') throw erro;
+
+  const mensagens = {
+    EACCES: `A porta ${porta} exige privilegios de administrador`,
+    EADDRINUSE: `A porta ${porta} ja esta em uso. Feche o outro processo ou defina PORTA no arquivo .env`
+  };
+
+  logger.erro(erro, { operacao: 'bin/www.listen' });
+  console.error(mensagens[erro.code] ?? erro.message);
+  process.exit(1);
+});
+
+/**
+ * Conecta ao MongoDB e cria os indices antes de aceitar requisicoes.
+ * @returns {Promise<void>}
+ */
+async function prepararBanco() {
+  try {
+    await Database.obterInstancia().conectar();
+    await Manutencao.criarIndices();
+    console.log(`MongoDB conectado: ${config.mongo.uri} (banco "${config.mongo.banco}")`);
+  } catch (erro) {
+    // ErroConexao ja foi registrado no log pela classe Database.
+    console.error(`MongoDB indisponivel: ${erro.message}`);
+    console.error('O servidor continuara no ar e tentara reconectar a cada requisicao.');
+  }
+}
+
+/**
+ * Encerra o servidor e a conexao com o banco.
+ * @returns {Promise<void>}
+ */
+async function encerrar() {
+  console.log('\nEncerrando o ZapChat 2...');
+  servidor.close();
+  await Database.obterInstancia().desconectar();
+  process.exit(0);
+}
+
+process.on('SIGINT', encerrar);
+process.on('SIGTERM', encerrar);
+
+prepararBanco().then(() => {
+  if (config.sessao.segredoPadrao) {
+    logger.aviso('SESSAO_SEGREDO nao definido: usando a chave de desenvolvimento', { operacao: 'bin/www' });
+  }
+
+  servidor.listen(porta, () => {
+    logger.info(`Servidor iniciado na porta ${porta}`, { operacao: 'bin/www' });
+    console.log(`ZapChat 2 rodando em http://localhost:${porta}`);
+  });
+});

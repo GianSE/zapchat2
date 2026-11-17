@@ -1,0 +1,48 @@
+{
+  "name": "zapchat2",
+  "version": "2.0.0",
+  "description": "ZapChat 2 - aplicacao Web de mensagens instantaneas com Express.js, EJS, sessoes e MongoDB Driver - Projeto 2 de EC48B Programacao Web Back-End",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "setup": "node scripts/setup.js",
+    "seed": "node scripts/seed.js",
+    "reset": "node scripts/reset.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "ejs",
+    "express-session",
+    "mongodb",
+    "mvc",
+    "mensagens-instantaneas"
+  ],
+  "author": "Gian Pedro Rodrigues (RA 2503638)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "app.js",
+      "bin",
+      "src"
+    ],
+    "ext": "js,ejs,json"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "ejs": "^3.1.10",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "http-errors": "^2.0.1",
+    "mongodb": "^6.22.0",
+    "morgan": "^1.12.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

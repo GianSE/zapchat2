@@ -1,0 +1,47 @@
+<%- include('../partials/topo') %>
+
+<div class="cartao" style="max-width:560px">
+  <div class="item">
+    <span class="avatar" style="font-size:3rem;width:4rem"><%= perfil.avatar %></span>
+    <div class="info">
+      <h1 style="margin:0"><%= perfil.nome %></h1>
+      <% if (perfil.apelido) { %><div class="suave">@<%= perfil.apelido %></div><% } %>
+      <span class="selo <%= perfil.status %>"><%= formatar.status(perfil.status) %></span>
+    </div>
+  </div>
+
+  <p><em><%= perfil.recado || '' %></em></p>
+
+  <table>
+    <tr><th>E-mail</th><td><%= perfil.email %></td></tr>
+    <tr><th>Último acesso</th><td><%= formatar.dataHora(perfil.ultimoAcesso) %></td></tr>
+    <tr><th>Membro desde</th><td><%= formatar.dataHora(perfil.criadoEm) %></td></tr>
+    <% if (contato) { %>
+      <tr><th>Na sua agenda como</th><td><%= contato.exibicao %> <%= contato.favorito ? '⭐' : '' %> <%= contato.bloqueado ? '(bloqueado)' : '' %></td></tr>
+    <% } %>
+  </table>
+
+  <div class="acoes">
+    <% if (conversaId) { %>
+      <a class="botao" href="/conversas/<%= conversaId %>#fim">Abrir conversa</a>
+    <% } else { %>
+      <form class="inline" method="post" action="/conversas/privada">
+        <input type="hidden" name="destinatarioId" value="<%= perfil._id %>">
+        <input type="hidden" name="voltar" value="/usuarios/<%= perfil._id %>">
+        <button type="submit">Iniciar conversa</button>
+      </form>
+    <% } %>
+
+    <% if (contato) { %>
+      <a class="botao secundario" href="/contatos/<%= contato._id %>/editar">Editar contato</a>
+    <% } else { %>
+      <form class="inline" method="post" action="/contatos">
+        <input type="hidden" name="contatoId" value="<%= perfil._id %>">
+        <input type="hidden" name="voltar" value="/usuarios/<%= perfil._id %>">
+        <button type="submit" class="secundario">+ Adicionar aos contatos</button>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/rodape') %>

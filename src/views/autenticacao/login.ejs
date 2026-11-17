@@ -1,0 +1,31 @@
+<%- include('../partials/topo') %>
+
+<div class="cartao centralizado">
+  <h1>Entrar no ZapChat</h1>
+
+  <% if (aviso) { %><div class="aviso info"><%= aviso %></div><% } %>
+  <%- include('../partials/erro-formulario') %>
+
+  <form method="post" action="/login">
+    <label for="email">E-mail</label>
+    <input type="email" id="email" name="email" value="<%= dados.email %>" autocomplete="username" autofocus>
+
+    <label for="senha">Senha</label>
+    <input type="password" id="senha" name="senha" autocomplete="current-password">
+
+    <label class="check">
+      <input type="checkbox" name="lembrar" <%= dados.lembrar ? 'checked' : '' %>>
+      Lembrar meu e-mail neste navegador (cookie)
+    </label>
+
+    <div class="acoes">
+      <button type="submit">Entrar</button>
+      <a class="botao secundario" href="/cadastro">Criar conta</a>
+    </div>
+  </form>
+
+  <p class="suave">Usuários de exemplo (após <code>npm run seed</code>): <code>ana@zapchat.dev</code>,
+    <code>bruno@zapchat.dev</code>... senha <code>senha123</code>.</p>
+</div>
+
+<%- include('../partials/rodape') %>

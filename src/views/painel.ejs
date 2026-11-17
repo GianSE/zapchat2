@@ -1,0 +1,70 @@
+<%- include('partials/topo') %>
+
+<div class="linha entre">
+  <h1><%= usuario.avatar %> Olá, <%= usuario.nomeExibicao %>!</h1>
+  <form class="linha" method="post" action="/perfil/status">
+    <input type="hidden" name="voltar" value="/painel">
+    <span class="selo <%= usuario.status %>"><%= formatar.status(usuario.status) %></span>
+    <select name="status" aria-label="Alterar status">
+      <% ['online', 'ausente', 'ocupado', 'offline'].forEach((opcao) => { %>
+        <option value="<%= opcao %>" <%= opcao === usuario.status ? 'selected' : '' %>><%= formatar.status(opcao) %></option>
+      <% }) %>
+    </select>
+    <button type="submit" class="secundario pequeno">Alterar</button>
+  </form>
+</div>
+
+<div class="numeros" style="margin-bottom:1rem">
+  <div class="numero"><strong><%= totalConversas %></strong> conversas</div>
+  <div class="numero"><strong><%= totalNaoLidas %></strong> não lidas</div>
+  <div class="numero"><strong><%= totalContatos %></strong> contatos</div>
+  <div class="numero"><strong><%= formatar.horaCurta(usuario.ultimoAcesso) || '—' %></strong> último acesso</div>
+</div>
+
+<div class="grade">
+  <section class="cartao">
+    <div class="linha entre">
+      <h2>Conversas recentes</h2>
+      <a href="/conversas">ver todas</a>
+    </div>
+
+    <% if (conversas.length === 0) { %>
+      <p class="suave">Você ainda não tem conversas. Abra uma pela sua <a href="/contatos">agenda</a>.</p>
+    <% } else { %>
+      <ul class="lista">
+        <% conversas.forEach((conversa) => { %><%- include('partials/item-conversa', { conversa }) %><% }) %>
+      </ul>
+    <% } %>
+  </section>
+
+  <section class="cartao">
+    <div class="linha entre">
+      <h2>Contatos</h2>
+      <a href="/contatos">agenda completa</a>
+    </div>
+
+    <% if (agenda.length === 0) { %>
+      <p class="suave">Sua agenda está vazia. Encontre pessoas em <a href="/usuarios">Usuários</a>.</p>
+    <% } else { %>
+      <ul class="lista">
+        <% agenda.forEach((contato) => { %>
+          <li class="item">
+            <span class="avatar"><%= contato.avatar %></span>
+            <div class="info">
+              <a href="/usuarios/<%= contato.contatoId %>"><%= contato.exibicao %></a>
+              <% if (contato.favorito) { %>⭐<% } %>
+              <div class="previa"><%= contato.recado %></div>
+            </div>
+            <form class="inline" method="post" action="/conversas/privada">
+              <input type="hidden" name="destinatarioId" value="<%= contato.contatoId %>">
+              <input type="hidden" name="voltar" value="/painel">
+              <button type="submit" class="pequeno">Conversar</button>
+            </form>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+</div>
+
+<%- include('partials/rodape') %>

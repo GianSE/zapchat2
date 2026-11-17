@@ -1,0 +1,71 @@
+<%- include('../partials/topo') %>
+
+<p><a href="/conversas/<%= conversa._id %>#fim">← voltar para a conversa</a></p>
+<h1><%= conversa.icone %> Configurar grupo</h1>
+
+<div class="grade">
+  <section class="cartao">
+    <h2>Dados do grupo</h2>
+    <form method="post" action="/conversas/atualizar">
+      <input type="hidden" name="id" value="<%= conversa._id %>">
+
+      <label for="nome">Nome *</label>
+      <input type="text" id="nome" name="nome" value="<%= conversa.nome %>">
+
+      <label for="descricao">Descrição</label>
+      <input type="text" id="descricao" name="descricao" value="<%= conversa.descricao || '' %>">
+
+      <label for="icone">Ícone</label>
+      <input type="text" id="icone" name="icone" value="<%= conversa.icone %>">
+
+      <div class="acoes"><button type="submit">Salvar</button></div>
+    </form>
+  </section>
+
+  <section class="cartao">
+    <h2>Participantes (<%= participantes.length %>)</h2>
+    <ul class="lista">
+      <% participantes.forEach((pessoa) => { %>
+        <li class="item">
+          <span class="avatar"><%= pessoa.avatar %></span>
+          <div class="info">
+            <%= pessoa.nomeExibicao %> <% if (pessoa.administrador) { %><span class="selo">admin</span><% } %>
+          </div>
+          <% if (pessoa._id !== usuarioLogado.id) { %>
+            <form class="inline" method="post" action="/conversas/participantes/remover">
+              <input type="hidden" name="id" value="<%= conversa._id %>">
+              <input type="hidden" name="usuarioId" value="<%= pessoa._id %>">
+              <button type="submit" class="pequeno secundario">Remover</button>
+            </form>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+
+    <h3 style="margin-top:1rem">Adicionar participante</h3>
+    <% if (candidatos.length === 0) { %>
+      <p class="suave">Todos os seus contatos já participam do grupo.</p>
+    <% } else { %>
+      <form class="linha" method="post" action="/conversas/participantes">
+        <input type="hidden" name="id" value="<%= conversa._id %>">
+        <select name="usuarioId" style="flex:1">
+          <% candidatos.forEach((contato) => { %>
+            <option value="<%= contato.contatoId %>"><%= contato.avatar %> <%= contato.exibicao %></option>
+          <% }) %>
+        </select>
+        <button type="submit">Adicionar</button>
+      </form>
+    <% } %>
+  </section>
+</div>
+
+<div class="cartao">
+  <h2>Excluir grupo</h2>
+  <p class="suave">Remove o grupo com todas as mensagens e reações.</p>
+  <form method="post" action="/conversas/excluir" onsubmit="return confirm('Excluir o grupo definitivamente?')">
+    <input type="hidden" name="id" value="<%= conversa._id %>">
+    <button type="submit" class="perigo">Excluir grupo</button>
+  </form>
+</div>
+
+<%- include('../partials/rodape') %>

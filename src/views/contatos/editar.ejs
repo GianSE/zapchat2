@@ -1,0 +1,24 @@
+<%- include('../partials/topo') %>
+
+<div class="cartao" style="max-width:520px">
+  <p><a href="/contatos">← voltar para a agenda</a></p>
+  <h1><%= usuario.avatar %> <%= usuario.nome %></h1>
+  <p class="suave"><%= usuario.email %></p>
+
+  <form method="post" action="/contatos/atualizar">
+    <input type="hidden" name="id" value="<%= contato._id %>">
+
+    <label for="apelido">Apelido na agenda</label>
+    <input type="text" id="apelido" name="apelido" value="<%= contato.apelido || '' %>">
+
+    <label class="check"><input type="checkbox" name="favorito" <%= contato.favorito ? 'checked' : '' %>> Favorito ⭐</label>
+    <label class="check"><input type="checkbox" name="bloqueado" <%= contato.bloqueado ? 'checked' : '' %>> Bloqueado (não pode iniciar conversa com você)</label>
+
+    <div class="acoes">
+      <button type="submit">Salvar</button>
+      <a class="botao secundario" href="/contatos">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<%- include('../partials/rodape') %>

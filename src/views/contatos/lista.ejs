@@ -1,0 +1,64 @@
+<%- include('../partials/topo') %>
+
+<h1>Agenda de contatos</h1>
+
+<div class="conversa-layout">
+  <section class="cartao">
+    <div class="linha" style="margin-bottom:.5rem">
+      Filtrar:
+      <% filtros.forEach((opcao) => { %>
+        <a class="botao pequeno <%= opcao === filtro ? '' : 'secundario' %>" href="/contatos?filtro=<%= opcao %>"><%= opcao %></a>
+      <% }) %>
+    </div>
+
+    <% if (agenda.length === 0) { %>
+      <p class="suave">Nenhum contato encontrado neste filtro.</p>
+    <% } else { %>
+      <ul class="lista">
+        <% agenda.forEach((contato) => { %>
+          <li class="item">
+            <span class="avatar"><%= contato.avatar %></span>
+            <div class="info">
+              <a href="/usuarios/<%= contato.contatoId %>"><%= contato.exibicao %></a>
+              <% if (contato.favorito) { %>⭐<% } %>
+              <% if (contato.bloqueado) { %><span class="selo ocupado">bloqueado</span><% } %>
+              <div class="previa"><%= contato.nome %> · <%= contato.email %></div>
+            </div>
+            <div class="linha">
+              <% if (!contato.bloqueado) { %>
+                <form class="inline" method="post" action="/conversas/privada">
+                  <input type="hidden" name="destinatarioId" value="<%= contato.contatoId %>">
+                  <input type="hidden" name="voltar" value="/contatos">
+                  <button type="submit" class="pequeno">Conversar</button>
+                </form>
+              <% } %>
+              <a class="botao pequeno secundario" href="/contatos/<%= contato._id %>/editar">Editar</a>
+              <form class="inline" method="post" action="/contatos/excluir" onsubmit="return confirm('Remover da agenda?')">
+                <input type="hidden" name="id" value="<%= contato._id %>">
+                <button type="submit" class="pequeno perigo">Remover</button>
+              </form>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+
+  <aside class="cartao">
+    <h2>Adicionar contato</h2>
+    <form method="post" action="/contatos">
+      <label for="email">E-mail do usuário *</label>
+      <input type="email" id="email" name="email" placeholder="pessoa@zapchat.dev">
+
+      <label for="apelido">Apelido na agenda</label>
+      <input type="text" id="apelido" name="apelido">
+
+      <label class="check"><input type="checkbox" name="favorito"> Favorito</label>
+
+      <div class="acoes"><button type="submit">Adicionar</button></div>
+    </form>
+    <p class="suave">Também é possível adicionar pela lista de <a href="/usuarios">usuários</a>.</p>
+  </aside>
+</div>
+
+<%- include('../partials/rodape') %>

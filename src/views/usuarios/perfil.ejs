@@ -1,0 +1,78 @@
+<%- include('../partials/topo') %>
+
+<h1><%= perfil.avatar %> Meu perfil</h1>
+
+<div class="grade">
+  <section class="cartao">
+    <h2>Dados pessoais</h2>
+    <%- include('../partials/erro-formulario') %>
+
+    <form method="post" action="/perfil/atualizar">
+      <label for="nome">Nome *</label>
+      <input type="text" id="nome" name="nome" value="<%= dados.nome || '' %>">
+
+      <label>E-mail</label>
+      <input type="email" value="<%= perfil.email %>" disabled>
+
+      <div class="campos-2">
+        <div>
+          <label for="apelido">Apelido</label>
+          <input type="text" id="apelido" name="apelido" value="<%= dados.apelido || '' %>">
+        </div>
+        <div>
+          <label for="telefone">Telefone</label>
+          <input type="text" id="telefone" name="telefone" placeholder="(99) 99999-9999" value="<%= dados.telefone || '' %>">
+        </div>
+        <div>
+          <label for="avatar">Avatar (emoji)</label>
+          <input type="text" id="avatar" name="avatar" value="<%= dados.avatar || '' %>">
+        </div>
+        <div>
+          <label for="recado">Recado</label>
+          <input type="text" id="recado" name="recado" value="<%= dados.recado || '' %>">
+        </div>
+      </div>
+
+      <div class="acoes"><button type="submit">Salvar perfil</button></div>
+    </form>
+  </section>
+
+  <div>
+    <section class="cartao">
+      <h2>Status</h2>
+      <form class="linha" method="post" action="/perfil/status">
+        <select name="status" style="flex:1">
+          <% statusValidos.forEach((opcao) => { %>
+            <option value="<%= opcao %>" <%= opcao === perfil.status ? 'selected' : '' %>><%= formatar.status(opcao) %></option>
+          <% }) %>
+        </select>
+        <button type="submit">Alterar</button>
+      </form>
+    </section>
+
+    <section class="cartao" id="senha">
+      <h2>Alterar senha</h2>
+      <form method="post" action="/perfil/senha">
+        <label for="senhaAtual">Senha atual</label>
+        <input type="password" id="senhaAtual" name="senhaAtual" autocomplete="current-password">
+        <label for="novaSenha">Nova senha</label>
+        <input type="password" id="novaSenha" name="novaSenha" autocomplete="new-password">
+        <label for="confirmacao">Confirmar nova senha</label>
+        <input type="password" id="confirmacao" name="confirmacao" autocomplete="new-password">
+        <div class="acoes"><button type="submit">Alterar senha</button></div>
+      </form>
+    </section>
+
+    <section class="cartao" id="excluir">
+      <h2>Excluir conta</h2>
+      <p class="suave">Remove seus contatos, conversas privadas e reações. Nos grupos, você deixa de participar.</p>
+      <form method="post" action="/perfil/excluir" onsubmit="return confirm('Excluir sua conta definitivamente?')">
+        <label for="senhaExcluir">Confirme com sua senha</label>
+        <input type="password" id="senhaExcluir" name="senha" autocomplete="current-password">
+        <div class="acoes"><button type="submit" class="perigo">Excluir minha conta</button></div>
+      </form>
+    </section>
+  </div>
+</div>
+
+<%- include('../partials/rodape') %>
